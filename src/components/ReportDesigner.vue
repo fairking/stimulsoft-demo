@@ -8,22 +8,31 @@
 <script>
 	export default {
 		name: 'ReportDesigner',
+		data() {
+			return {
+				loaded: 0
+			};
+		},
 		head: {
 			style: [
 				{ type: 'text/css', src: 'stimulsoft/stimulsoft.designer.office2013.whiteblue.css' },
 				{ type: 'text/css', src: 'stimulsoft/stimulsoft.viewer.office2013.whiteblue.css' }
 			],
 			script: [
-				{ type: 'text/javascript', src: 'stimulsoft/stimulsoft.reports.js' },
-				{ type: 'text/javascript', src: 'stimulsoft/stimulsoft.viewer.js' },
-				{ type: 'text/javascript', src: 'stimulsoft/stimulsoft.designer.js' }
+				{ type: 'text/javascript', src: 'stimulsoft/stimulsoft.reports.js', id: 'stimulsoft_reports', async: false },
+				{ type: 'text/javascript', src: 'stimulsoft/stimulsoft.viewer.js', id: 'stimulsoft_viewer', async: false },
+				{ type: 'text/javascript', src: 'stimulsoft/stimulsoft.designer.js', id: 'stimulsoft_designer', async: false }
 			]
 		},
 		mounted: function () {
 			this.$on('okHead', function () {
-				console.log("okHead");
-				setTimeout(this.stiInit, 5000);
-			}.bind(this));
+				const sr = document.getElementById('stimulsoft_reports');
+				sr.onload = this.stiInit;
+				const sv = document.getElementById('stimulsoft_viewer');
+				sv.onload = this.stiInit;
+				const sd = document.getElementById('stimulsoft_designer');
+				sd.onload = this.stiInit;
+			});
 		},
 		methods: {
 			onBeginProcessData(e) {
@@ -31,6 +40,11 @@
 				console.log(e);
 			},
 			stiInit() {
+				console.log(this.loaded);
+				if (this.loaded < 3) {
+					this.loaded++;
+					return;
+				}
 				console.log("Loading Designer view");
 
 				console.log("Set full screen mode for the designer");
